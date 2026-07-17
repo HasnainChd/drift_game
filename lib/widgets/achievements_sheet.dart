@@ -26,12 +26,10 @@ class AchievementsSheet extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'ACHIEVEMENTS',
-                  style: TextStyle(
+                  style: AppTextStyles.displayTitle(
                     fontSize: 20.0,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.0,
                     color: Colors.white,
                   ),
                 ),
@@ -88,16 +86,15 @@ class AchievementsSheet extends ConsumerWidget {
                           children: [
                             Text(
                               ach.title,
-                              style: TextStyle(
+                              style: AppTextStyles.body(
                                 fontSize: 14.0,
-                                fontWeight: FontWeight.bold,
                                 color: ach.isUnlocked ? Colors.white : Colors.white54,
-                              ),
+                              ).copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 4.0),
                             Text(
                               ach.description,
-                              style: TextStyle(
+                              style: AppTextStyles.body(
                                 fontSize: 11.0,
                                 color: ach.isUnlocked ? Colors.white70 : Colors.white38,
                               ),

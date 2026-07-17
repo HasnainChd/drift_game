@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 class BackgroundPainter extends CustomPainter {
@@ -11,15 +12,15 @@ class BackgroundPainter extends CustomPainter {
     required this.elapsedTime,
   });
 
-  // A fixed set of stars to avoid regenerating on each frame
-  static final List<BackgroundStar> _stars = List.generate(40, (index) {
-    // Deterministic random properties
-    final double x = (index * 137.5) % 1.0;
-    final double y = (index * 72.3) % 1.0;
-    final double size = 1.0 + (index % 3) * 0.8;
-    final double speed = 10.0 + (index % 4) * 8.0; // px/s scrolling speed
-    final double opacity = 0.05 + (index % 3) * 0.06;
-    return BackgroundStar(x, y, size, speed, opacity);
+  static final Random _random = Random(42);
+  static final List<Star> _stars = List.generate(80, (index) {
+    return Star(
+      x: _random.nextDouble(),
+      y: _random.nextDouble(),
+      baseRadius: _random.nextDouble() > 0.9 ? 2.0 + _random.nextDouble() * 0.5 : 0.5 + _random.nextDouble() * 1.0,
+      twinkleSpeed: 1.0 + _random.nextDouble() * 3.0,
+      twinklePhaseOffset: _random.nextDouble() * 2 * pi,
+    );
   });
 
   @override
@@ -35,17 +36,21 @@ class BackgroundPainter extends CustomPainter {
 
     canvas.drawRect(bgRect, bgPaint);
 
-    // 2. Draw Parallax Starfield (Scrolling slowly leftward)
+    // 2. Draw Parallax Starfield (Scrolling slowly downward)
+    // Scroll speed is roughly 10-15% of gate scroll. Let's say 25.0 px/s
+    final double scrollSpeed = 25.0;
+
     for (final star in _stars) {
-      double starX = (star.xPercent * size.width - elapsedTime * star.speed) % size.width;
-      if (starX < 0) starX += size.width;
-      final double starY = star.yPercent * size.height;
+      final double opacity = 0.3 + 0.5 * (0.5 + 0.5 * sin(elapsedTime * star.twinkleSpeed + star.twinklePhaseOffset));
+      
+      double starY = (star.y * size.height + elapsedTime * scrollSpeed) % size.height;
+      double starX = star.x * size.width;
 
       final Paint starPaint = Paint()
-        ..color = Colors.white.withOpacity(star.opacity)
+        ..color = Colors.white.withOpacity(opacity.clamp(0.0, 1.0))
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(Offset(starX, starY), star.size, starPaint);
+      canvas.drawCircle(Offset(starX, starY), star.baseRadius, starPaint);
     }
   }
 
@@ -57,18 +62,18 @@ class BackgroundPainter extends CustomPainter {
   }
 }
 
-class BackgroundStar {
-  final double xPercent;
-  final double yPercent;
-  final double size;
-  final double speed;
-  final double opacity;
+class Star {
+  final double x; // 0.0-1.0, relative to screen width
+  final double y; // 0.0-1.0, relative to screen height
+  final double baseRadius;
+  final double twinkleSpeed; // radians/sec
+  final double twinklePhaseOffset; // radians
 
-  const BackgroundStar(
-    this.xPercent,
-    this.yPercent,
-    this.size,
-    this.speed,
-    this.opacity,
-  );
+  const Star({
+    required this.x,
+    required this.y,
+    required this.baseRadius,
+    required this.twinkleSpeed,
+    required this.twinklePhaseOffset,
+  });
 }

@@ -27,21 +27,17 @@ class ScoreHud extends ConsumerWidget {
               children: [
                 Text(
                   'SCORE',
-                  style: TextStyle(
+                  style: AppTextStyles.label(
                     fontSize: 10.0,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
                     color: Colors.white.withOpacity(0.4),
                   ),
                 ),
                 Text(
                   '${gameState.score}',
-                  style: const TextStyle(
+                  style: AppTextStyles.scoreNumber(
                     fontSize: 48.0,
-                    fontWeight: FontWeight.w900,
                     color: Colors.white,
-                    height: 1.1,
-                  ),
+                  ).copyWith(height: 1.1),
                 ),
               ],
             ),
@@ -63,20 +59,16 @@ class ScoreHud extends ConsumerWidget {
                 children: [
                   Text(
                     'TIER ${tier.tier}',
-                    style: TextStyle(
+                    style: AppTextStyles.label(
                       fontSize: 9.0,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.5,
                       color: palette.orbColor,
                     ),
                   ),
                   const SizedBox(height: 2.0),
                   Text(
                     tier.name.toUpperCase(),
-                    style: const TextStyle(
+                    style: AppTextStyles.label(
                       fontSize: 14.0,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
                       color: Colors.white,
                     ),
                   ),

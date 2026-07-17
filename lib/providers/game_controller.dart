@@ -12,6 +12,9 @@ import 'package:drift_game/providers/settings_provider.dart';
 import 'package:drift_game/providers/orb_skins_provider.dart';
 import 'package:drift_game/providers/achievements_provider.dart';
 import 'package:drift_game/providers/leaderboard_provider.dart';
+import 'package:audioplayers/audioplayers.dart';
+
+enum HapticType { light, medium }
 
 class GameParticle {
   final double x;
@@ -34,7 +37,8 @@ class GameParticle {
     required this.remainingLifetime,
   });
 
-  double get progress => ((maxLifetime - remainingLifetime) / maxLifetime).clamp(0.0, 1.0);
+  double get progress =>
+      ((maxLifetime - remainingLifetime) / maxLifetime).clamp(0.0, 1.0);
 
   GameParticle copyWith({
     double? x,
@@ -142,7 +146,9 @@ class GameControllerState {
       screenShake: screenShake ?? this.screenShake,
       particles: particles ?? this.particles,
       dt: dt ?? this.dt,
-      achievementBannerText: clearBanner ? null : (achievementBannerText ?? this.achievementBannerText),
+      achievementBannerText: clearBanner
+          ? null
+          : (achievementBannerText ?? this.achievementBannerText),
     );
   }
 }
@@ -161,7 +167,37 @@ class GameController extends StateNotifier<GameControllerState> {
 
   static const double gateWidth = 60.0;
 
+  final AudioPlayer _audioPlayer1 = AudioPlayer();
+  final AudioPlayer _audioPlayer2 = AudioPlayer();
+  final AudioPlayer _audioPlayer3 = AudioPlayer();
+
   GameController(this._ref) : super(GameControllerState.initial());
+
+  void _playSound(String assetPath) {
+    final settings = _ref.read(settingsProvider);
+    if (settings.soundEnabled) {
+      if (assetPath.contains('flap')) {
+        _audioPlayer1.play(AssetSource(assetPath));
+      } else if (assetPath.contains('chime')) {
+        _audioPlayer2.play(AssetSource(assetPath));
+      } else {
+        _audioPlayer3.play(AssetSource(assetPath));
+      }
+    }
+  }
+
+  void _triggerHaptic(HapticType type) {
+    final settings = _ref.read(settingsProvider);
+    if (!settings.hapticsEnabled) return;
+    switch (type) {
+      case HapticType.light:
+        HapticFeedback.lightImpact();
+        break;
+      case HapticType.medium:
+        HapticFeedback.mediumImpact();
+        break;
+    }
+  }
 
   @override
   void dispose() {
@@ -187,7 +223,7 @@ class GameController extends StateNotifier<GameControllerState> {
     final gates = <Gate>[];
     final tier = GameConstants.getTier(0);
     final palette = GamePalette.getPaletteForScore(0);
-    
+
     double startX = state.screenWidth + 100.0;
     for (int i = 0; i < 4; i++) {
       double gateX = startX + i * tier.spawnDistance;
@@ -231,12 +267,12 @@ class GameController extends StateNotifier<GameControllerState> {
     }
 
     // Play tactile feedback
-    if (settings.hapticsEnabled) {
-      HapticFeedback.lightImpact();
-    }
+    _triggerHaptic(HapticType.light);
+    _playSound('sounds/tap.ogg');
 
     double impulseVelocity = -GameConstants.flapImpulse;
-    impulseVelocity = impulseVelocity.clamp(-GameConstants.maxUpwardVelocity, GameConstants.terminalVelocity);
+    impulseVelocity = impulseVelocity.clamp(
+        -GameConstants.maxUpwardVelocity, GameConstants.terminalVelocity);
 
     state = state.copyWith(
       orbVelocity: impulseVelocity,
@@ -246,10 +282,11 @@ class GameController extends StateNotifier<GameControllerState> {
   double _generateNextGapY(double screenHeight, double gapHeight) {
     final double maxDelta = screenHeight * GameConstants.maxGapDeltaPercent;
 
-    final double minY = (GameConstants.safeZoneTop + gapHeight / 2)
-        .clamp(0.0, screenHeight);
-    final double maxY = (screenHeight - GameConstants.safeZoneBottom - gapHeight / 2)
-        .clamp(0.0, screenHeight);
+    final double minY =
+        (GameConstants.safeZoneTop + gapHeight / 2).clamp(0.0, screenHeight);
+    final double maxY =
+        (screenHeight - GameConstants.safeZoneBottom - gapHeight / 2)
+            .clamp(0.0, screenHeight);
 
     final double rawOffset = (_random.nextDouble() * 2 - 1) * maxDelta;
     double newCenterY = (_lastGapCenterY + rawOffset).clamp(minY, maxY);
@@ -299,7 +336,8 @@ class GameController extends StateNotifier<GameControllerState> {
       return;
     }
 
-    double dt = (elapsed.inMicroseconds - _lastElapsed.inMicroseconds) / 1000000.0;
+    double dt =
+        (elapsed.inMicroseconds - _lastElapsed.inMicroseconds) / 1000000.0;
     _lastElapsed = elapsed;
 
     final double clampedDt = dt.clamp(0.0, 1.0 / 30.0);
@@ -308,7 +346,8 @@ class GameController extends StateNotifier<GameControllerState> {
     final palette = GamePalette.getPaletteForScore(state.score);
 
     double velocity = state.orbVelocity + GameConstants.gravity * clampedDt;
-    velocity = velocity.clamp(-GameConstants.maxUpwardVelocity, GameConstants.terminalVelocity);
+    velocity = velocity.clamp(
+        -GameConstants.maxUpwardVelocity, GameConstants.terminalVelocity);
 
     double orbY = state.orbY + velocity * clampedDt;
 
@@ -352,7 +391,7 @@ class GameController extends StateNotifier<GameControllerState> {
       if (newGateX + gateWidth < 0) {
         double spawnX = maxGateX + tier.spawnDistance;
         double gapY = _generateNextGapY(state.screenHeight, tier.gapHeight);
-        
+
         updatedGates.add(Gate(
           id: gate.id,
           x: spawnX,
@@ -374,6 +413,8 @@ class GameController extends StateNotifier<GameControllerState> {
 
     int newScore = state.score + scoreIncrement;
     if (scoreIncrement > 0) {
+      _playSound('sounds/gate_pass.ogg');
+      _triggerHaptic(HapticType.light);
       _ref.read(highScoreProvider.notifier).updateHighScore(newScore);
       _checkUnlocksAsync(newScore, newElapsedTime);
     }
@@ -381,14 +422,25 @@ class GameController extends StateNotifier<GameControllerState> {
     bool collided = outOfBounds;
     if (!collided) {
       for (final gate in updatedGates) {
-        if (gate.x <= orbX + GameConstants.orbRadius && gate.x + gateWidth >= orbX - GameConstants.orbRadius) {
+        if (gate.x <= orbX + GameConstants.orbRadius &&
+            gate.x + gateWidth >= orbX - GameConstants.orbRadius) {
           bool topCollide = _checkCircleRectCollision(
-            orbX, orbY, GameConstants.orbRadius,
-            gate.x, 0.0, gateWidth, gate.gapY,
+            orbX,
+            orbY,
+            GameConstants.orbRadius,
+            gate.x,
+            0.0,
+            gateWidth,
+            gate.gapY,
           );
           bool bottomCollide = _checkCircleRectCollision(
-            orbX, orbY, GameConstants.orbRadius,
-            gate.x, gate.gapY + gate.gapHeight, gateWidth, state.screenHeight - (gate.gapY + gate.gapHeight),
+            orbX,
+            orbY,
+            GameConstants.orbRadius,
+            gate.x,
+            gate.gapY + gate.gapHeight,
+            gateWidth,
+            state.screenHeight - (gate.gapY + gate.gapHeight),
           );
 
           if (topCollide || bottomCollide) {
@@ -415,7 +467,8 @@ class GameController extends StateNotifier<GameControllerState> {
       for (int i = 0; i < 10; i++) {
         double angle = _random.nextDouble() * 2 * pi;
         double speed = 60.0 + _random.nextDouble() * 100.0;
-        Color pColor = palette.particleColors[_random.nextInt(palette.particleColors.length)];
+        Color pColor = palette
+            .particleColors[_random.nextInt(palette.particleColors.length)];
         updatedParticles.add(GameParticle(
           x: orbX,
           y: orbY,
@@ -431,11 +484,8 @@ class GameController extends StateNotifier<GameControllerState> {
 
     if (collided) {
       _ticker?.stop();
-      
-      final settings = _ref.read(settingsProvider);
-      if (settings.hapticsEnabled) {
-        HapticFeedback.mediumImpact();
-      }
+      _playSound('sounds/collision.ogg');
+      _triggerHaptic(HapticType.medium);
 
       // Check unlocks at game over (for survival time, etc.)
       _checkUnlocksAsync(newScore, newElapsedTime);
@@ -445,11 +495,13 @@ class GameController extends StateNotifier<GameControllerState> {
         _ref.read(leaderboardProvider.notifier).addScore(newScore);
       });
 
-      final List<GameParticle> collisionParticles = List<GameParticle>.from(updatedParticles);
+      final List<GameParticle> collisionParticles =
+          List<GameParticle>.from(updatedParticles);
       for (int i = 0; i < 25; i++) {
         double angle = _random.nextDouble() * 2 * pi;
         double speed = 100.0 + _random.nextDouble() * 250.0;
-        Color pColor = palette.particleColors[_random.nextInt(palette.particleColors.length)];
+        Color pColor = palette
+            .particleColors[_random.nextInt(palette.particleColors.length)];
         collisionParticles.add(GameParticle(
           x: orbX,
           y: orbY,
@@ -492,8 +544,8 @@ class GameController extends StateNotifier<GameControllerState> {
     );
   }
 
-  bool _checkCircleRectCollision(
-      double cx, double cy, double r, double rx, double ry, double rw, double rh) {
+  bool _checkCircleRectCollision(double cx, double cy, double r, double rx,
+      double ry, double rw, double rh) {
     double closestX = cx.clamp(rx, rx + rw);
     double closestY = cy.clamp(ry, ry + rh);
 
@@ -515,7 +567,8 @@ class GameController extends StateNotifier<GameControllerState> {
         _lastElapsed = elapsed;
         return;
       }
-      double dt = (elapsed.inMicroseconds - _lastElapsed.inMicroseconds) / 1000000.0;
+      double dt =
+          (elapsed.inMicroseconds - _lastElapsed.inMicroseconds) / 1000000.0;
       _lastElapsed = elapsed;
       final double clampedDt = dt.clamp(0.0, 1.0 / 30.0);
 
@@ -543,7 +596,8 @@ class GameController extends StateNotifier<GameControllerState> {
       if (newShake == 0.0 && updatedParticles.isEmpty) {
         _ticker?.stop();
       }
-    })..start();
+    })
+      ..start();
   }
 
   void resetToMenu() {

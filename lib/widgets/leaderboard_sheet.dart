@@ -45,12 +45,10 @@ class LeaderboardSheet extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'TOP DRIFTERS',
-                  style: TextStyle(
+                  style: AppTextStyles.displayTitle(
                     fontSize: 20.0,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.0,
                     color: Colors.white,
                   ),
                 ),
@@ -67,7 +65,7 @@ class LeaderboardSheet extends ConsumerWidget {
                 child: Center(
                   child: Text(
                     'No scores recorded yet.',
-                    style: TextStyle(
+                    style: AppTextStyles.body(
                       color: Colors.white.withOpacity(0.3),
                       fontSize: 14.0,
                     ),
@@ -124,9 +122,8 @@ class LeaderboardSheet extends ConsumerWidget {
                           alignment: Alignment.center,
                           child: Text(
                             '$rank',
-                            style: TextStyle(
+                            style: AppTextStyles.scoreNumber(
                               fontSize: 14.0,
-                              fontWeight: FontWeight.w900,
                               color: rankColor,
                             ),
                           ),
@@ -139,7 +136,7 @@ class LeaderboardSheet extends ConsumerWidget {
                             children: [
                               Text(
                                 _getRelativeTime(entry.timestamp),
-                                style: const TextStyle(
+                                style: AppTextStyles.body(
                                   fontSize: 12.0,
                                   color: Colors.white54,
                                 ),
@@ -148,9 +145,8 @@ class LeaderboardSheet extends ConsumerWidget {
                                 const SizedBox(height: 2.0),
                                 Text(
                                   'NEW PERSONAL SCORE!',
-                                  style: TextStyle(
+                                  style: AppTextStyles.label(
                                     fontSize: 9.0,
-                                    fontWeight: FontWeight.w900,
                                     color: palette.orbColor,
                                   ),
                                 ),
@@ -161,9 +157,8 @@ class LeaderboardSheet extends ConsumerWidget {
                         // Score Display
                         Text(
                           '${entry.score}',
-                          style: TextStyle(
+                          style: AppTextStyles.scoreNumber(
                             fontSize: 22.0,
-                            fontWeight: FontWeight.w900,
                             color: rank == 1 ? const Color(0xFFFFD700) : Colors.white,
                           ),
                         ),

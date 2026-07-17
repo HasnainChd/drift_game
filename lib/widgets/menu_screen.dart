@@ -87,12 +87,10 @@ class MenuScreen extends ConsumerWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ).createShader(bounds),
-            child: const Text(
+            child: Text(
               'DRIFT',
-              style: TextStyle(
+              style: AppTextStyles.displayTitle(
                 fontSize: 82.0,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 8.0,
                 color: Colors.white,
               ),
             ),
@@ -104,10 +102,8 @@ class MenuScreen extends ConsumerWidget {
           // Subtitle
           Text(
             'TAP-TO-FLAP ARCADE',
-            style: TextStyle(
+            style: AppTextStyles.label(
               fontSize: 14.0,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 4.0,
               color: Colors.white.withOpacity(0.5),
             ),
           )
@@ -131,19 +127,16 @@ class MenuScreen extends ConsumerWidget {
               children: [
                 Text(
                   'HIGH SCORE',
-                  style: TextStyle(
+                  style: AppTextStyles.label(
                     fontSize: 11.0,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
                     color: palette.orbColor.withOpacity(0.8),
                   ),
                 ),
                 const SizedBox(height: 6.0),
                 Text(
                   '$highScore',
-                  style: const TextStyle(
+                  style: AppTextStyles.scoreNumber(
                     fontSize: 36.0,
-                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
@@ -180,12 +173,10 @@ class MenuScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              child: const Text(
+              child: Text(
                 'TAP TO START',
-                style: TextStyle(
+                style: AppTextStyles.button(
                   fontSize: 18.0,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 3.0,
                   color: Colors.white,
                 ),
               ),
@@ -205,10 +196,8 @@ class MenuScreen extends ConsumerWidget {
           if (!settings.hasPlayedBefore)
             Text(
               'TAP TO RISE',
-              style: TextStyle(
+              style: AppTextStyles.label(
                 fontSize: 11.0,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 2.0,
                 color: palette.orbColor,
               ),
             )

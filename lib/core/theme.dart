@@ -1,4 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class AppTextStyles {
+  // Big display text: game title, "COLLISION"/game-over headline, tier names
+  static TextStyle displayTitle({Color color = Colors.white, double fontSize = 40}) {
+    return GoogleFonts.orbitron(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 4.0,
+      color: color,
+    );
+  }
+
+  // Large numbers: score during gameplay, final score, high score value
+  static TextStyle scoreNumber({Color color = Colors.white, double fontSize = 56}) {
+    return GoogleFonts.orbitron(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 1.0,
+      color: color,
+    );
+  }
+
+  // Small all-caps tracked labels: "SCORE", "BEST", "TIER 1", "GAME OVER" subtitle
+  static TextStyle label({Color color = Colors.white70, double fontSize = 13}) {
+    return GoogleFonts.rajdhani(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 2.5,
+      color: color,
+    );
+  }
+
+  // Buttons: "TRY AGAIN", "TAP TO START", "SHARE SCORE"
+  static TextStyle button({Color color = Colors.black, double fontSize = 16}) {
+    return GoogleFonts.rajdhani(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 1.5,
+      color: color,
+    );
+  }
+
+  // Body/readable text: achievement descriptions, settings labels, leaderboard entries
+  static TextStyle body({Color color = Colors.white70, double fontSize = 14}) {
+    return GoogleFonts.rajdhani(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w500,
+      letterSpacing: 0.3,
+      color: color,
+    );
+  }
+}
 
 class GamePalette {
   final int tier;

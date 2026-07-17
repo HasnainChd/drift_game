@@ -25,12 +25,10 @@ class SettingsSheet extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'SYSTEM CONTROLS',
-                  style: TextStyle(
+                  style: AppTextStyles.displayTitle(
                     fontSize: 20.0,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.0,
                     color: Colors.white,
                   ),
                 ),
@@ -54,17 +52,16 @@ class SettingsSheet extends ConsumerWidget {
                 children: [
                   // Sound Toggle
                   SwitchListTile(
-                    title: const Text(
+                    title: Text(
                       'SOUND EFFECTS',
-                      style: TextStyle(
+                      style: AppTextStyles.button(
                         fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
                     subtitle: Text(
                       'Atmospheric game audio feedback',
-                      style: TextStyle(
+                      style: AppTextStyles.body(
                         fontSize: 11.0,
                         color: Colors.white.withOpacity(0.4),
                       ),
@@ -78,17 +75,16 @@ class SettingsSheet extends ConsumerWidget {
                   const Divider(color: Colors.white10, height: 1),
                   // Haptics Toggle
                   SwitchListTile(
-                    title: const Text(
+                    title: Text(
                       'HAPTIC ENGINE',
-                      style: TextStyle(
+                      style: AppTextStyles.button(
                         fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
                     subtitle: Text(
                       'Tactile impact bumps on jump & shatter',
-                      style: TextStyle(
+                      style: AppTextStyles.body(
                         fontSize: 11.0,
                         color: Colors.white.withOpacity(0.4),
                       ),

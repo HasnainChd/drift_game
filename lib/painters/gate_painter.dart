@@ -15,19 +15,24 @@ class GatePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     const double gateWidth = 60.0;
     const double cornerRadius = 12.0;
+    const double arrowDepth = gateWidth * 0.65;
 
     for (final gate in gates) {
       // Skip gates that are off screen
       if (gate.x + gateWidth < 0 || gate.x > size.width) continue;
 
-      // 1. Draw TOP Wall
-      final Rect topRect = Rect.fromLTWH(gate.x, 0.0, gateWidth, gate.gapY);
-      final RRect topRRect = RRect.fromRectAndCorners(
-        topRect,
-        bottomLeft: const Radius.circular(cornerRadius),
-        bottomRight: const Radius.circular(cornerRadius),
-      );
+      // 1. Draw TOP Wall (Arrow pointing DOWN into the gap)
+      final Path topPath = Path()
+        ..moveTo(gate.x + cornerRadius, 0.0)
+        ..quadraticBezierTo(gate.x, 0.0, gate.x, cornerRadius)
+        ..lineTo(gate.x, gate.gapY - arrowDepth)
+        ..lineTo(gate.x + gateWidth / 2, gate.gapY)
+        ..lineTo(gate.x + gateWidth, gate.gapY - arrowDepth)
+        ..lineTo(gate.x + gateWidth, cornerRadius)
+        ..quadraticBezierTo(gate.x + gateWidth, 0.0, gate.x + gateWidth - cornerRadius, 0.0)
+        ..close();
 
+      final Rect topRect = Rect.fromLTWH(gate.x, 0.0, gateWidth, gate.gapY);
       final Paint topPaint = Paint()
         ..shader = LinearGradient(
           colors: [
@@ -39,7 +44,7 @@ class GatePainter extends CustomPainter {
         ).createShader(topRect)
         ..style = PaintingStyle.fill;
 
-      canvas.drawRRect(topRRect, topPaint);
+      canvas.drawPath(topPath, topPaint);
 
       // Subtle highlight line on the edge of the top cap
       final Paint capHighlightPaint = Paint()
@@ -47,24 +52,29 @@ class GatePainter extends CustomPainter {
         ..strokeWidth = 2.0
         ..style = PaintingStyle.stroke;
       
-      // Draw a line at the bottom of the top gate RRect
       final Path topCapPath = Path()
-        ..moveTo(gate.x + cornerRadius, gate.gapY)
-        ..lineTo(gate.x + gateWidth - cornerRadius, gate.gapY);
+        ..moveTo(gate.x, gate.gapY - arrowDepth)
+        ..lineTo(gate.x + gateWidth / 2, gate.gapY)
+        ..lineTo(gate.x + gateWidth, gate.gapY - arrowDepth);
       canvas.drawPath(topCapPath, capHighlightPaint);
 
-      // 2. Draw BOTTOM Wall
+      // 2. Draw BOTTOM Wall (Arrow pointing UP into the gap)
+      final Path bottomPath = Path()
+        ..moveTo(gate.x, gate.gapY + gate.gapHeight + arrowDepth)
+        ..lineTo(gate.x + gateWidth / 2, gate.gapY + gate.gapHeight)
+        ..lineTo(gate.x + gateWidth, gate.gapY + gate.gapHeight + arrowDepth)
+        ..lineTo(gate.x + gateWidth, size.height - cornerRadius)
+        ..quadraticBezierTo(gate.x + gateWidth, size.height, gate.x + gateWidth - cornerRadius, size.height)
+        ..lineTo(gate.x + cornerRadius, size.height)
+        ..quadraticBezierTo(gate.x, size.height, gate.x, size.height - cornerRadius)
+        ..close();
+
       final double bottomWallHeight = size.height - (gate.gapY + gate.gapHeight);
       final Rect bottomRect = Rect.fromLTWH(
         gate.x,
         gate.gapY + gate.gapHeight,
         gateWidth,
         bottomWallHeight,
-      );
-      final RRect bottomRRect = RRect.fromRectAndCorners(
-        bottomRect,
-        topLeft: const Radius.circular(cornerRadius),
-        topRight: const Radius.circular(cornerRadius),
       );
 
       final Paint bottomPaint = Paint()
@@ -78,12 +88,12 @@ class GatePainter extends CustomPainter {
         ).createShader(bottomRect)
         ..style = PaintingStyle.fill;
 
-      canvas.drawRRect(bottomRRect, bottomPaint);
+      canvas.drawPath(bottomPath, bottomPaint);
 
-      // Draw a line at the top of the bottom gate RRect
       final Path bottomCapPath = Path()
-        ..moveTo(gate.x + cornerRadius, gate.gapY + gate.gapHeight)
-        ..lineTo(gate.x + gateWidth - cornerRadius, gate.gapY + gate.gapHeight);
+        ..moveTo(gate.x, gate.gapY + gate.gapHeight + arrowDepth)
+        ..lineTo(gate.x + gateWidth / 2, gate.gapY + gate.gapHeight)
+        ..lineTo(gate.x + gateWidth, gate.gapY + gate.gapHeight + arrowDepth);
       canvas.drawPath(bottomCapPath, capHighlightPaint);
 
       // Draw a subtle border around the entire gates for depth (inner shadow effect)
@@ -92,8 +102,8 @@ class GatePainter extends CustomPainter {
         ..strokeWidth = 1.5
         ..style = PaintingStyle.stroke;
 
-      canvas.drawRRect(topRRect, borderPaint);
-      canvas.drawRRect(bottomRRect, borderPaint);
+      canvas.drawPath(topPath, borderPaint);
+      canvas.drawPath(bottomPath, borderPaint);
     }
   }
 

@@ -151,14 +151,25 @@ class _GameCanvasState extends ConsumerState<GameCanvas> {
                         const Icon(Icons.emoji_events, color: Colors.black, size: 24.0),
                         const SizedBox(width: 12.0),
                         Expanded(
-                          child: Text(
-                            gameState.achievementBannerText!,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 13.0,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0.5,
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'ACHIEVEMENT UNLOCKED',
+                                style: AppTextStyles.label(
+                                  fontSize: 10.0,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              Text(
+                                gameState.achievementBannerText!,
+                                style: AppTextStyles.body(
+                                  fontSize: 13.0,
+                                  color: Colors.black,
+                                ).copyWith(fontWeight: FontWeight.w700),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -172,30 +183,7 @@ class _GameCanvasState extends ConsumerState<GameCanvas> {
                       .slideY(begin: 0.0, end: -0.4, duration: 400.ms),
                 ),
 
-              // Temporary Debug Overlay
-              if (gameState.status == GameStatus.playing)
-                Positioned(
-                  top: 170,
-                  left: 16,
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(6.0),
-                    ),
-                    child: Text(
-                      'dt: ${gameState.dt.toStringAsFixed(4)}\n'
-                      'fps: ${(gameState.dt > 0 ? 1.0 / gameState.dt : 0.0).toStringAsFixed(0)}\n'
-                      'orbVelocity: ${gameState.orbVelocity.toStringAsFixed(0)}\n'
-                      'orbY: ${gameState.orbY.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontFamily: 'monospace',
-                      ),
-                    ),
-                  ),
-                ),
+
             ],
           ),
         );

@@ -26,12 +26,10 @@ class SkinsSheet extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'ORB COSMOS',
-                  style: TextStyle(
+                  style: AppTextStyles.displayTitle(
                     fontSize: 20.0,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.0,
                     color: Colors.white,
                   ),
                 ),
@@ -122,22 +120,18 @@ class SkinsSheet extends ConsumerWidget {
                         const SizedBox(height: 12.0),
                         Text(
                           skin.name.toUpperCase(),
-                          style: TextStyle(
+                          style: AppTextStyles.body(
                             fontSize: 12.0,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.0,
                             color: skin.isUnlocked ? Colors.white : Colors.white38,
-                          ),
+                          ).copyWith(fontWeight: FontWeight.w900),
                         ),
                         const SizedBox(height: 4.0),
                         Text(
                           skin.isUnlocked
                               ? (isSelected ? 'SELECTED' : 'UNLOCKED')
                               : 'SCORE ${skin.unlockScoreThreshold}',
-                          style: TextStyle(
+                          style: AppTextStyles.label(
                             fontSize: 9.0,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
                             color: isSelected
                                 ? Color(skin.primaryColorValue)
                                 : (skin.isUnlocked ? Colors.white38 : Colors.white24),

@@ -25,13 +25,11 @@ class GameOverScreen extends ConsumerWidget {
             const Spacer(flex: 3),
 
             // Game Over Text
-            const Text(
+            Text(
               'COLLISION',
-              style: TextStyle(
+              style: AppTextStyles.displayTitle(
                 fontSize: 42.0,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 6.0,
-                color: Color(0xFFFF3366),
+                color: const Color(0xFFFF3366),
               ),
             )
                 .animate()
@@ -42,10 +40,8 @@ class GameOverScreen extends ConsumerWidget {
 
             Text(
               'GAME OVER',
-              style: TextStyle(
+              style: AppTextStyles.label(
                 fontSize: 14.0,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 4.0,
                 color: Colors.white.withOpacity(0.5),
               ),
             )
@@ -76,12 +72,10 @@ class GameOverScreen extends ConsumerWidget {
                         color: palette.orbColor,
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      child: const Text(
+                      child: Text(
                         'NEW RECORD',
-                        style: TextStyle(
+                        style: AppTextStyles.label(
                           fontSize: 9.0,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.0,
                           color: Colors.black,
                         ),
                       ),
@@ -98,20 +92,17 @@ class GameOverScreen extends ConsumerWidget {
                   ],
 
                   // Final Score
-                  const Text(
+                  Text(
                     'SCORE',
-                    style: TextStyle(
+                    style: AppTextStyles.label(
                       fontSize: 12.0,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2.0,
                       color: Colors.white60,
                     ),
                   ),
                   Text(
                     '${gameState.score}',
-                    style: TextStyle(
+                    style: AppTextStyles.scoreNumber(
                       fontSize: 64.0,
-                      fontWeight: FontWeight.w900,
                       color: isNewRecord ? palette.orbColor : Colors.white,
                     ),
                   ),
@@ -124,20 +115,17 @@ class GameOverScreen extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'BEST',
-                        style: TextStyle(
+                        style: AppTextStyles.label(
                           fontSize: 12.0,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
                           color: Colors.white38,
                         ),
                       ),
                       Text(
                         '$highScore',
-                        style: const TextStyle(
+                        style: AppTextStyles.scoreNumber(
                           fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
                           color: Colors.white70,
                         ),
                       ),
@@ -162,12 +150,11 @@ class GameOverScreen extends ConsumerWidget {
                       Share.share('I scored ${gameState.score} on Drift! Can you beat it?');
                     },
                     icon: const Icon(Icons.share, size: 16.0),
-                    label: const Text(
+                    label: Text(
                       'SHARE SCORE',
-                      style: TextStyle(
+                      style: AppTextStyles.button(
                         fontSize: 11.0,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -199,12 +186,10 @@ class GameOverScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                child: const Text(
+                child: Text(
                   'TRY AGAIN',
-                  style: TextStyle(
+                  style: AppTextStyles.button(
                     fontSize: 16.0,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.0,
                     color: Colors.black,
                   ),
                 ),
@@ -227,10 +212,8 @@ class GameOverScreen extends ConsumerWidget {
               },
               child: Text(
                 'BACK TO MENU',
-                style: TextStyle(
+                style: AppTextStyles.button(
                   fontSize: 12.0,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2.0,
                   color: Colors.white.withOpacity(0.4),
                 ),
               ),
